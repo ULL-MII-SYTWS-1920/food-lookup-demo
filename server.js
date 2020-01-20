@@ -47,11 +47,11 @@ app.get('/api/food', (req, res) => {
       r[0].values.map((entry) => {
         const e = {};
         COLUMNS.forEach((c, idx) => {
-          // combine fat columns
+          // Sumaremos todas las grasas
           if (c.match(/^fa_/)) {
-            e.fat_g = e.fat_g || 0.0;
+            e.fat_g = e.fat_g || 0.0; // Inicializamos e.fat_g como 0.0 si no está definido 
             e.fat_g = (
-              parseFloat(e.fat_g, 10) + parseFloat(entry[idx], 10)
+              parseFloat(e.fat_g, 10) + parseFloat(entry[idx], 10) // y acumulamos nueva grasa
             ).toFixed(2);
           } else {
             e[c] = entry[idx];
