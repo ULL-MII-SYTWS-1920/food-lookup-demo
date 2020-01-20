@@ -13,7 +13,8 @@
     "server": "babel-node server.js",
     "lint": "eslint .",
     "debug":"node --inspect-brk server.js",
-    "curl-get": "curl localhost:3001/api/food?q=hash+browns | jq '.'"
+    "get-browns": "curl localhost:3001/api/food?q=hash+browns | jq '.'",
+    "get-5708": "curl localhost:3001/api/food/5708  | jq ."
   },
   "devDependencies": {
     "concurrently": "3.1.0",
