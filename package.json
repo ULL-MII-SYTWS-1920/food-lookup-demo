@@ -10,9 +10,9 @@
     "sql.js": "0.3.2"
   },
   "scripts": {
-    "server": "babel-node server.js",
+    "server": "nodemon server.js",
     "lint": "eslint .",
-    "debug":"node --inspect-brk server.js",
+    "debug": "node --inspect-brk server.js",
     "get-browns": "curl localhost:3001/api/food?q=hash+browns | jq '.'",
     "get-5708": "curl localhost:3001/api/food/5708  | jq ."
   },
@@ -22,6 +22,7 @@
     "eslint-config-airbnb": "14.1.0",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-jsx-a11y": "4.0.0",
-    "eslint-plugin-react": "6.9.0"
+    "eslint-plugin-react": "6.9.0",
+    "nodemon": "^2.0.2"
   }
 }
