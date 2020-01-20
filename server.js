@@ -16,53 +16,67 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const COLUMNS = [
+  'ndb_no',
+  'description',
   'carbohydrate_g',
   'protein_g',
   'fa_sat_g',
   'fa_mono_g',
   'fa_poly_g',
   'kcal',
-  'description',
+  'sugar_g'
 ];
-app.get('/api/food', (req, res) => {
-  const param = req.query.q;
 
-  if (!param) {
+const qcolumns = COLUMNS.join(', ');
+
+function buildAnswer(r) {
+  // console.log('buildAnswer',r);
+  return r.values.map((entry) => {
+    const e = {};
+    COLUMNS.forEach((c, idx) => {
+      // Sumaremos todas las grasas
+      if (c.match(/^fa_/)) {
+        e.fat_g = e.fat_g || 0.0; // Inicializamos e.fat_g como 0.0 si no está definido 
+        e.fat_g = (
+          parseFloat(e.fat_g, 10) + parseFloat(entry[idx], 10) // y acumulamos nueva grasa
+        ).toFixed(2);
+      } else {
+        e[c] = entry[idx];
+      }
+    });
+    // console.log(e);
+    return e;
+  })
+}
+
+app.get('/api/food', (req, res) => {
+  const query = req.query.q;
+
+  if (!query) {
     res.json({
-      error: 'Missing required parameter `q`',
+      error: 'Missing required query `q`',
     });
     return;
   }
 
   // WARNING: Not for production use! The following statement
   // is not protected against SQL injections.
-  const r = db.exec(`
-    select ${COLUMNS.join(', ')} from entries
-    where description like '%${param}%'
-    limit 100
-  `);
+  const r = db.exec(`select ${qcolumns} from entries where description like '%${query}%' limit 100`);
 
-  if (r[0]) {
-    res.json(
-      r[0].values.map((entry) => {
-        const e = {};
-        COLUMNS.forEach((c, idx) => {
-          // Sumaremos todas las grasas
-          if (c.match(/^fa_/)) {
-            e.fat_g = e.fat_g || 0.0; // Inicializamos e.fat_g como 0.0 si no está definido 
-            e.fat_g = (
-              parseFloat(e.fat_g, 10) + parseFloat(entry[idx], 10) // y acumulamos nueva grasa
-            ).toFixed(2);
-          } else {
-            e[c] = entry[idx];
-          }
-        });
-        return e;
-      })
-    );
-  } else {
-    res.json([]);
-  }
+  if (r[0]) res.json(buildAnswer(r[0]))
+  else  res.json([]);
+});
+
+app.get('/api/food/:ndb_no', (req, res) => {
+  const ndb_no = req.params.ndb_no;
+  // console.log(ndb_no)
+  const query = `select ${qcolumns} from entries where ndb_no = ${ndb_no}`
+  // console.log(query);
+  const r = db.exec(query);
+  // console.log(r)
+
+  if (r[0]) res.json(buildAnswer(r[0])) 
+  else res.json([]);
 });
 
 app.listen(app.get('port'), () => {
