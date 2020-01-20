@@ -54,3 +54,9 @@ Find the server at: http://localhost:3001/
   }
 ]
 ```
+
+# Here we go
+
+Starting with the section [Here we go](https://www.newline.co/fullstack-react/articles/using-create-react-app-with-a-server/#here-we-go) of the tutorial, I decide to try the example more JAM-like style. thus, I am going to create a separated repo for the client and make the project in two parts: the client that I intend to deploy in GitHub or Netlify
+and the server that I will deploy in Heroku
+
